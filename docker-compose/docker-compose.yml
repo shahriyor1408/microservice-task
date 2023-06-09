@@ -1,0 +1,30 @@
+version: '3'
+services:
+  zipkin-server:
+    build: zipkin-server/
+    ports:
+      - "9411:9411"
+  discovery-server:
+    build: ../service-discovery/
+    ports:
+      - "8761:8761"
+    depends_on:
+      - zipkin-server
+  user-db-service:
+    build: ../user-repository-service
+    ports:
+      - "8070:8070"
+    depends_on:
+      - discovery-server
+  user-service:
+    build: ../user-service
+    ports:
+      - "8080:8080"
+    depends_on:
+      - discovery-server
+  web-service:
+    build: ../web-api-service
+    ports:
+      - "8090:8090"
+    depends_on:
+      - discovery-server
